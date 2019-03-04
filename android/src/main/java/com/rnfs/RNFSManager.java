@@ -10,9 +10,11 @@ import android.os.StatFs;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.util.Base64;
+import android.util.Log;
 import android.util.SparseArray;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -360,7 +362,48 @@ public class RNFSManager extends ReactContextBaseJavaModule {
     }.execute(filepath, destPath);
   }
 
-  private class CopyFileTask extends AsyncTask<String, Void, Exception> {
+
+    @ReactMethod
+    public void copyAssetFile(final String filepath, final String destPath, ReadableMap options, final Promise promise) {
+        new CopyFileAssetTask() {
+            @Override
+            protected void onPostExecute (Exception ex) {
+                if (ex == null) {
+                    promise.resolve(null);
+                } else {
+                    ex.printStackTrace();
+                    reject(promise, filepath, ex);
+                }
+            }
+        }.execute(filepath, destPath);
+    }
+
+    private class CopyFileAssetTask extends AsyncTask<String, Void, Exception> {
+        protected Exception doInBackground(String... paths) {
+            try {
+                AssetManager assetManager = getReactApplicationContext().getAssets();
+                //stream = assetManager.open(paths[0], 0);
+                String destPath = paths[1];
+
+                InputStream in = assetManager.open(paths[0], 0);
+                OutputStream out = getOutputStream(destPath, false);
+
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                    Thread.yield();
+                }
+                in.close();
+                out.close();
+                return null;
+            } catch (Exception ex) {
+                return ex;
+            }
+        }
+    }
+
+    private class CopyFileTask extends AsyncTask<String, Void, Exception> {
     protected Exception doInBackground(String... paths) {
       try {
         String filepath = paths[0];
@@ -916,3 +959,4 @@ public class RNFSManager extends ReactContextBaseJavaModule {
     return constants;
   }
 }
+
