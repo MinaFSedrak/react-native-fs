@@ -340,11 +340,11 @@ var RNFS = {
   },
 
   // Android only
-  copyFileAssets(filepath: string, destPath:string) {
-    if (!RNFSManager.copyFileAssets) {
-      throw new Error('copyFileAssets is not available on this platform');
+  copyFile(filepath: string, destPath:string) {
+    if (!RNFSManager.copyFile) {
+      throw new Error('copyFile is not available on this platform');
     }
-    return RNFSManager.copyFileAssets(normalizeFilePath(filepath), normalizeFilePath(destPath)).then(() => void 0);
+    return RNFSManager.copyFile(normalizeFilePath(filepath), normalizeFilePath(destPath)).then(() => void 0);
   },
     
   // Android only
