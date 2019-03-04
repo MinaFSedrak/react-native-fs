@@ -200,6 +200,10 @@ var RNFS = {
     return RNFSManager.copyFile(normalizeFilePath(filepath), normalizeFilePath(destPath), options).then(() => void 0);
   },
 
+  copyAssetFile(filepath: string, destPath: string, options: FileOptions = {}): Promise<void> {
+    return RNFSManager.copyAssetFile(normalizeFilePath(filepath), normalizeFilePath(destPath), options).then(() => void 0);
+  },
+
   pathForBundle(bundleNamed: string): Promise<string> {
     return RNFSManager.pathForBundle(bundleNamed);
   },
@@ -340,15 +344,7 @@ var RNFS = {
   },
 
   // Android only
-  copyFile(filepath: string, destPath:string) {
-    if (!RNFSManager.copyFile) {
-      throw new Error('copyFile is not available on this platform');
-    }
-    return RNFSManager.copyFile(normalizeFilePath(filepath), normalizeFilePath(destPath)).then(() => void 0);
-  },
-    
-  // Android only
-  copyFileAssets(filepath: string, destPath: string) {
+  copyFileAssets(filepath: string, destPath:string) {
     if (!RNFSManager.copyFileAssets) {
       throw new Error('copyFileAssets is not available on this platform');
     }
